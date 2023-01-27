@@ -65,6 +65,7 @@
     <string name="load_album_image">Last.fm album images</string>
     <string name="load_artist_image_summary">Load artist images from Last.fm</string>
     <string name="load_album_image_summary">Load album images from Last.fm (only if not available locally)</string>
-
+    <string name="load_makeitpersonal_online_lyrics">MakePersonal online lyrics</string>
+    <string name="load_makeitpersonal_online_lyrics_summary">Prefer MakePersonal online lyrics than embedded lyrics in music file.</string>
 
 </resources>

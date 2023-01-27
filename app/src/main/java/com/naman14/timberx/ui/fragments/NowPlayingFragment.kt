@@ -132,8 +132,9 @@ class NowPlayingFragment : BaseNowPlayingFragment() {
             val currentSong = nowPlayingViewModel.currentData.value
             val artist = currentSong?.artist
             val title = currentSong?.title
-            if (artist != null && title != null) {
-                safeActivity.addFragment(fragment = LyricsFragment.newInstance(artist, title))
+            val songId = currentSong?.mediaId
+            if (songId != null && artist != null && title != null) {
+                safeActivity.addFragment(fragment = LyricsFragment.newInstance(songId, artist, title))
             }
         }
     }

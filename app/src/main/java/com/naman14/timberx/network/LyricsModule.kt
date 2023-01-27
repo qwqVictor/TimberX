@@ -22,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
 private const val LYRICS_API_HOST = "https://makeitpersonal.co"
+const val ONLINE_LYRICS_PREFERENCE = "makeitpersonal_online_lyrics"
 
 val lyricsModule = module {
 

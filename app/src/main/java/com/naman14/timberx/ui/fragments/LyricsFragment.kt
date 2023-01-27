@@ -15,29 +15,37 @@
 package com.naman14.timberx.ui.fragments
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.naman14.timberx.R
 import com.naman14.timberx.constants.Constants.ARTIST
 import com.naman14.timberx.constants.Constants.SONG
+import com.naman14.timberx.constants.Constants.SONG_ID
 import com.naman14.timberx.databinding.FragmentLyricsBinding
 import com.naman14.timberx.extensions.argument
 import com.naman14.timberx.extensions.disposeOnDetach
 import com.naman14.timberx.extensions.inflateWithBinding
 import com.naman14.timberx.extensions.ioToMain
 import com.naman14.timberx.extensions.subscribeForOutcome
+import com.naman14.timberx.network.ONLINE_LYRICS_PREFERENCE
 import com.naman14.timberx.network.Outcome
 import com.naman14.timberx.network.api.LyricsRestService
 import com.naman14.timberx.ui.fragments.base.BaseNowPlayingFragment
 import com.naman14.timberx.util.AutoClearedValue
+import com.naman14.timberx.util.LyricsExtractor
+import com.naman14.timberx.util.MusicUtils
 import org.koin.android.ext.android.inject
+import timber.log.Timber
+import java.io.File
 
 class LyricsFragment : BaseNowPlayingFragment() {
     companion object {
-        fun newInstance(artist: String, title: String): LyricsFragment {
+        fun newInstance(songId: String, artist: String, title: String): LyricsFragment {
             return LyricsFragment().apply {
                 arguments = Bundle().apply {
+                    putString(SONG_ID, songId)
                     putString(ARTIST, artist)
                     putString(SONG, title)
                 }
@@ -46,6 +54,7 @@ class LyricsFragment : BaseNowPlayingFragment() {
     }
 
     private lateinit var artistName: String
+    private lateinit var songId: String
     lateinit var songTitle: String
     var binding by AutoClearedValue<FragmentLyricsBinding>(this)
 
@@ -59,6 +68,7 @@ class LyricsFragment : BaseNowPlayingFragment() {
         binding = inflater.inflateWithBinding(R.layout.fragment_lyrics, container)
         artistName = argument(ARTIST)
         songTitle = argument(SONG)
+        songId = argument(SONG_ID)
         return binding.root
     }
 
@@ -66,14 +76,26 @@ class LyricsFragment : BaseNowPlayingFragment() {
         super.onActivityCreated(savedInstanceState)
         binding.songTitle = songTitle
 
-        // TODO make the lyrics handler/repo injectable
-        lyricsService.getLyrics(artistName, songTitle)
-                .ioToMain()
-                .subscribeForOutcome { outcome ->
-                    when (outcome) {
-                        is Outcome.Success -> binding.lyrics = outcome.data
+        val songUri = MusicUtils.getSongUri(songId.toLong())
+        val songPath = MusicUtils.getRealPathFromURI(requireContext(), songUri)
+        val songFile = File(songPath)
+        val lyrics = LyricsExtractor.getLyrics(songFile) ?: ""
+        if (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(ONLINE_LYRICS_PREFERENCE, false)) {
+            lyricsService.getLyrics(artistName, songTitle)
+                    .ioToMain()
+                    .subscribeForOutcome { outcome ->
+                        when (outcome) {
+                            is Outcome.Success -> binding.lyrics = outcome.data
+                            else -> {
+                                binding.lyrics = lyrics
+                            }
+                        }
                     }
-                }
-                .disposeOnDetach(view)
+                    .disposeOnDetach(view)
+        }
+        else {
+            binding.lyrics = lyrics
+        }
     }
 }

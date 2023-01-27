@@ -31,6 +31,7 @@ object Constants {
     const val ALBUM = "album"
     const val ARTIST = "artist"
     const val SONG = "song"
+    const val SONG_ID = "song_id"
     const val SONGS = "songs"
     const val QUEUE_FROM = "queue_from"
     const val QUEUE_TO = "queue_to"

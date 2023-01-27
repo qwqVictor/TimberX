@@ -36,17 +36,25 @@
         app:iconSpaceReserved="false" />
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="lastfm_artist_image"
         android:summary="@string/load_artist_image_summary"
         android:title="@string/load_artist_image"
         app:iconSpaceReserved="false" />
 
     <CheckBoxPreference
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:key="lastfm_album_image"
         android:summary="@string/load_album_image_summary"
         android:title="@string/load_album_image"
+        app:iconSpaceReserved="false" />
+    <CheckBoxPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="false"
+        android:key="makeitpersonal_online_lyrics"
+        android:summary="@string/load_makeitpersonal_online_lyrics_summary"
+        android:title="@string/load_makeitpersonal_online_lyrics"
         app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

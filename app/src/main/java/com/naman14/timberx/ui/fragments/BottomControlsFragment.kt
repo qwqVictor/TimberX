@@ -139,11 +139,12 @@ class BottomControlsFragment : BaseNowPlayingFragment(), BottomSheetListener {
             val currentSong = nowPlayingViewModel.currentData.value
             val artist = currentSong?.artist
             val title = currentSong?.title
+            val songId = currentSong?.mediaId
             val mainActivity = activity as? MainActivity
-            if (artist != null && title != null && mainActivity != null) {
+            if (songId != null && artist != null && title != null && mainActivity != null) {
                 mainActivity.collapseBottomSheet()
                 Handler().postDelayed({
-                    mainActivity.addFragment(fragment = LyricsFragment.newInstance(artist, title))
+                    mainActivity.addFragment(fragment = LyricsFragment.newInstance(songId, artist, title))
                 }, 200)
             }
         }
@@ -166,7 +167,7 @@ class BottomControlsFragment : BaseNowPlayingFragment(), BottomSheetListener {
             if (it.isCasting) {
                 isCasting = true
 
-                mainViewModel.castProgressLiveData.observe(this, castProgressObserver)
+                mainViewModel.castProgressLiveData.observe(viewLifecycleOwner, castProgressObserver)
                 setLastFmAlbumImage(binding.bottomContolsAlbumart, it.castSongArtist, it.castSongAlbum, ArtworkSize.SMALL, it.castAlbumId.toLong())
 
                 binding.songArtist.text = getString(R.string.casting_to_x, it.castDeviceName)
@@ -195,7 +196,7 @@ class BottomControlsFragment : BaseNowPlayingFragment(), BottomSheetListener {
                 .observe(this) {
                     when (it) {
                         ACTION_CAST_CONNECTED -> {
-                            mainViewModel.castLiveData.observe(this, castStatusObserver)
+                            mainViewModel.castLiveData.observe(viewLifecycleOwner, castStatusObserver)
                         }
                         ACTION_CAST_DISCONNECTED -> {
                             isCasting = false
